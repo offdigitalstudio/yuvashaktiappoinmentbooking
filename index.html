@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Yuva Shakti Application Appointment Booking</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#14213d;--gold:#fca311;--bg:#f3f5fa;--err:#c62828;--ok:#2e7d32;--line:#d5dbe8}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Noto Sans Bengali',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:#1b1b1b;font-size:15px;line-height:1.5}
+.wrap{max-width:660px;margin:0 auto;padding:14px 14px 40px}
+header.top{background:var(--navy);color:#fff;text-align:center;padding:18px 12px;border-radius:0 0 16px 16px}
+header.top h1{margin:0;font-size:19px;line-height:1.3}
+header.top .shop{margin-top:6px;color:var(--gold);font-weight:700;font-size:17px;letter-spacing:.5px}
+.card{background:#fff;border-radius:14px;padding:16px;margin-top:14px;box-shadow:0 1px 6px rgba(20,33,61,.08)}
+h2{font-size:16px;margin:0 0 6px;color:var(--navy)}
+.fl{display:block;margin-top:14px;font-weight:600;font-size:14px}
+.hint{font-weight:400;color:#667;font-size:12px}
+input[type=text],input[type=password],input[type=tel],input[type=date],input[type=number],textarea{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;font:inherit;background:#fff;margin-top:5px}
+input:focus,textarea:focus{outline:none;border-color:var(--navy)}
+textarea{min-height:76px;resize:vertical}
+.pre{display:flex;align-items:stretch;margin-top:5px}
+.pre span{display:flex;align-items:center;padding:0 12px;background:#eef1f8;border:1.5px solid var(--line);border-right:0;border-radius:10px 0 0 10px;font-weight:600}
+.pre input{margin-top:0;border-radius:0 10px 10px 0}
+.grp{margin-top:6px}
+.phs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.ph{border:2px dashed #9aa6c2;border-radius:12px;min-height:118px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background:#fafbff;text-align:center;padding:6px;overflow:hidden}
+.ph .plus{font-size:38px;line-height:1;color:var(--navy);font-weight:300}
+.ph .cap{font-size:12px;color:#556}
+.ph img{max-width:100%;max-height:78px;border-radius:6px;display:block}
+.ph.done{border:2px solid var(--ok);background:#f1faf2}
+.ph .up{color:var(--ok);font-weight:700;font-size:12px;margin-top:3px}
+.note{font-size:12px;color:#8a5a00;background:#fff6e0;border-radius:8px;padding:8px 10px;margin-top:8px}
+.chk{display:flex;gap:10px;align-items:flex-start;margin:14px 0;font-size:13.5px;line-height:1.55;cursor:pointer}
+.chk input{width:20px;height:20px;margin-top:3px;flex:none;accent-color:var(--navy)}
+.chk .en{color:#445;font-size:12.5px}
+.nm{color:var(--navy)}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:13px 18px;font-weight:700}
+button.primary{background:var(--gold);color:#1b1b1b;width:100%;font-size:16px;margin-top:10px}
+button.sec{background:var(--navy);color:#fff}
+button.ghost{background:#e8ecf5;color:var(--navy)}
+button:disabled{opacity:.55;cursor:not-allowed}
+#errs{display:none;background:#fdecea;color:var(--err);border-radius:10px;padding:10px 12px;margin-top:12px;font-size:14px}
+.row{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #eceff6}
+.row b{color:var(--navy)}
+.row span{text-align:right;word-break:break-word}
+.big{font-size:30px;font-weight:700;color:var(--navy)}
+.overlay{position:fixed;inset:0;background:rgba(10,18,38,.7);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;text-align:center;color:#fff}
+.overlay.on{display:flex}
+.spin{width:42px;height:42px;border:5px solid rgba(255,255,255,.3);border-top-color:var(--gold);border-radius:50%;animation:sp 1s linear infinite;margin:0 auto 12px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.modal{background:#fff;color:#1b1b1b;border-radius:16px;padding:14px;max-width:460px;width:100%}
+.modal video{width:100%;border-radius:10px;background:#000;max-height:60vh}
+.modal .btns{display:flex;gap:8px;margin-top:10px}
+.modal .btns button{flex:1}
+.camerr{color:var(--err);font-size:14px;margin:8px 0;text-align:left}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th,td{border-bottom:1px solid #e5e9f3;padding:7px 6px;text-align:left;white-space:nowrap}
+th{background:#eef1f8}
+a{color:#0b57d0}
+.slotgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.foot{text-align:center;margin-top:22px;font-size:12px;color:#889}
+#letter{position:absolute;left:-10000px;top:0}
+.page{width:794px;height:1123px;overflow:hidden;background:#fff;color:#000;padding:34px 40px;font-family:'Noto Sans Bengali',sans-serif;font-size:12px;line-height:1.5}
+.page h3{margin:0;text-align:center;font-size:17px}
+.page .shopn{text-align:center;font-weight:700;margin-bottom:8px}
+.page .kv{display:flex;border-bottom:1px solid #bbb;padding:3px 0}
+.page .kv b{width:210px;flex:none}
+.page .sec{margin:10px 0 4px;font-weight:700;border-bottom:2px solid #000}
+.page .cbrow{display:flex;gap:8px;margin:7px 0;font-size:10.3px;line-height:1.45}
+.page .cbrow .en{color:#333}
+.cb{flex:none;width:13px;height:13px;border:1.5px solid #000;margin-top:2px;position:relative}
+.cb i{position:absolute;left:3px;top:-1px;width:4px;height:8px;border:solid #000;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.qrbox{text-align:center;margin-top:14px}
+.qrbox img{width:150px;height:150px}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>Yuva Shakti Application Appointment Booking</h1>
+  <div class="shop">Digital Studio</div>
+</header>
+<div class="wrap">
+
+<!-- ================= BOOKING FORM ================= -->
+<div id="viewForm">
+  <div class="card">
+    <h2>বুকিং ডিটেইলস / Booking Details</h2>
+
+    <label class="fl" for="name">Name / নাম</label>
+    <input type="text" id="name" maxlength="100" autocomplete="off">
+
+    <label class="fl" for="phone">Phone Number / মোবাইল নম্বর</label>
+    <div class="pre"><span>+91</span><input type="tel" id="phone" inputmode="numeric" maxlength="10" placeholder="10 digit number" autocomplete="off"></div>
+
+    <label class="fl" for="aadhaar">Aadhar Card Number / আধার কার্ড নম্বর</label>
+    <input type="tel" id="aadhaar" inputmode="numeric" maxlength="14" placeholder="XXXX XXXX XXXX" autocomplete="off">
+
+    <label class="fl" for="address">Address Line / ঠিকানার লাইন</label>
+    <textarea id="address" maxlength="300"></textarea>
+
+    <label class="fl" for="pin">Pin Code / পিনকোড</label>
+    <input type="tel" id="pin" inputmode="numeric" maxlength="6" placeholder="6 digit pin code" autocomplete="off">
+
+    <label class="fl">Aadhar Card Photo (Both Side) / আধার কার্ডের ছবি (দুই দিকের)</label>
+    <div class="phs" id="phsA"></div>
+
+    <label class="fl">Voter Card Photo (Both Side) / ভোটার কার্ডের ছবি (দুই দিকের)</label>
+    <div class="phs" id="phsV"></div>
+    <div class="note">জালিয়াতি (fraud) কমানোর জন্য গ্যালারি থেকে ছবি নেওয়া যাবে না। + চিহ্নে চাপ দিলে ক্যামেরা খুলবে এবং ক্যামেরার অনুমতি চাওয়া হবে। কার্ড সোজা করে, পুরো ও পরিষ্কারভাবে তুলুন।</div>
+  </div>
+
+  <div class="card">
+    <h2>সম্মতিপত্র / Declarations</h2>
+    <div id="consents"></div>
+    <div id="errs"></div>
+    <button class="primary" id="submitBtn">Submit</button>
+  </div>
+</div>
+
+<!-- ================= RECEIPT ================= -->
+<div id="viewReceipt" style="display:none">
+  <div class="card">
+    <h2>✅ বুকিং সম্পন্ন হয়েছে</h2>
+    <div class="row"><b>Total Booking</b><span id="rTotal"></span></div>
+    <div class="row"><b>Your Booking Number</b><span class="big" id="rNum"></span></div>
+    <div class="row"><b>Appointment Time and Date</b><span id="rAppt"></span></div>
+    <div class="row"><b>Service Charge</b><span id="rCharge"></span></div>
+    <button class="primary" id="dlBtn">Download Appointment Booking Letter</button>
+    <div class="note">অ্যাপয়েন্টমেন্ট লেটারটি (PDF) ডাউনলোড করে নিজের কাছে রাখুন এবং দোকানে আসার সময় সঙ্গে আনুন।</div>
+  </div>
+</div>
+
+<!-- ================= ADMIN ================= -->
+<div id="viewAdmin" style="display:none">
+  <div class="card" id="adLogin">
+    <h2>Admin Login</h2>
+    <label class="fl" for="adId">ADMIN ID</label>
+    <input type="text" id="adId" autocomplete="username">
+    <label class="fl" for="adPw">Password</label>
+    <input type="password" id="adPw" autocomplete="current-password">
+    <div id="adErr" class="camerr"></div>
+    <button class="primary" id="adBtn">Continue</button>
+  </div>
+
+  <div id="adPanel" style="display:none">
+    <div class="card" id="verifyCard" style="display:none"></div>
+
+    <div class="card">
+      <h2>ওয়ার্কিং টাইম (24 hours format, HH:MM)</h2>
+      <div id="slotsBox"></div>
+      <label class="fl" for="gap">One Appointment to another Appointment Distance (Minutes)</label>
+      <input type="number" id="gap" min="1" max="600">
+      <label class="fl" for="startDate">বুকিং শুরুর তারিখ <span class="hint">(ফাঁকা রাখলে আজ থেকে)</span></label>
+      <input type="date" id="startDate">
+      <div id="saveMsg" class="camerr"></div>
+      <button class="primary" id="saveBtn">SAVE</button>
+    </div>
+
+    <div class="card">
+      <h2>সব বুকিং <span class="hint" id="cnt"></span></h2>
+      <div class="tbl"><table id="tbl"></table></div>
+    </div>
+    <button class="ghost" id="logoutBtn" style="width:100%;margin-top:14px">Logout</button>
+  </div>
+</div>
+
+<div class="foot" id="foot">Digital Studio · <a href="#admin">Admin</a></div>
+</div>
+
+<!-- camera modal -->
+<div class="overlay" id="camOv">
+  <div class="modal">
+    <div id="camTitle" style="font-weight:700;margin-bottom:8px"></div>
+    <video id="vid" playsinline muted autoplay></video>
+    <div class="camerr" id="camErr"></div>
+    <div class="btns">
+      <button class="ghost" id="camCancel">Cancel</button>
+      <button class="ghost" id="camRetry" style="display:none">আবার চেষ্টা করুন</button>
+      <button class="primary" id="camShot" style="margin-top:0">📷 ছবি তুলুন</button>
+    </div>
+  </div>
+</div>
+
+<!-- loading overlay -->
+<div class="overlay" id="loadOv"><div><div class="spin"></div><div id="loadTxt">অপেক্ষা করুন...</div></div></div>
+
+<div id="letter"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+// ====== CONFIG: Apps Script Web App URL এখানে বসান (SETUP.md দেখুন) ======
+var API_URL = 'https://script.google.com/macros/s/AKfycbxpFWzioOdf564YFqZm4lZdvgK5mFd7YEVwi77cCX-MGYfRuoHv3gCjWggvtMarEjP-/exec';
+
+var $ = function (i) { return document.getElementById(i); };
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function api(body) {
+  return fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) })
+    .then(function (r) { return r.json(); });
+}
+function loading(on, txt) { $('loadOv').classList.toggle('on', !!on); if (txt) $('loadTxt').textContent = txt; }
+
+/* ---------- consent texts ---------- */
+var CONSENTS = [
+  { bn: "আমি, {N}, এই মর্মে সম্মতিদান করছি যে আমি সম্পূর্ণ নিজের ইচ্ছায় এই বুকিং ফর্মটি ফিলাপ করলাম। আমার উপর কোনোরূপ বলপ্রয়োগ করা হয়নি।",
+    en: "I, {N}, hereby consent that I have filled out this booking form entirely of my own free will. No coercion of any kind was used against me." },
+  { bn: "আমি, {N}, এই মর্মে সম্মতিদান করছি যে আমার দেওয়া সমস্ত তথ্য একদম সঠিক এবং নির্ভুল। যদি কাজ করার সময় আমার দেওয়া তথ্য ভুল পাওয়া যায় কিংবা একজনের তথ্য দিয়ে অন্য জনের কাজ করাচ্ছি এমনটা হলে আমার বুকিং তৎক্ষণাৎ বাতিল করা হবে এবং আমি কোনোরূপ বাধাদান করবো না এবং আমার বিরুদ্ধে IT ACT, 2000 ও BNS, 2023 অনুযায়ী কড়া ব্যবস্থা নেওয়ার সম্মতি দিচ্ছি।",
+    en: "I, {N}, hereby declare that all the information I have provided is completely accurate and correct. If, during the course of the work, the information provided is found to be incorrect, or if I am found to be using another person's details to carry out the work, my booking will be cancelled immediately without any objection on my part; furthermore, I consent to strict action being taken against me in accordance with the IT Act, 2000, and the BNS, 2023." },
+  { bn: "আমি, {N}, এই মর্মে সম্মতিদান করছি যে Digital Studio এবং এর কর্মকর্তা এই যুবশক্তি ফর্ম ফিলাপের ক্ষেত্রে শুধুমাত্র মাধ্যম হিসেবে কাজ করছে। ফর্ম ফিলাপের সময় আমি প্রয়োজনীয় তথ্য দেবো এবং Digital Studio এর তরফ থেকে আসা সমস্ত তথ্য মিলিয়ে দেখব। আমার টাকা পাওয়া না পাওয়া, এর সাথে ডিজিটাল স্টুডিও কিংবা তার কর্মীদের আমি কোনো দোষারোপ করতে পারবো না।",
+    en: "I, {N}, hereby acknowledge and agree that Digital Studio and its personnel are acting solely as intermediaries in the process of filling out this 'Yuboshakti' form. I will provide the necessary information during the form-filling process and verify all details provided by Digital Studio. I shall not hold Digital Studio or its staff responsible regarding the receipt or non-receipt of funds." },
+  { bn: "আমি, {N}, এই মর্মে সম্মতিদান করছি যে আমি কাজ হয়ে যাওয়ার পরে সঠিক ও পূর্বনির্ধারিত মূল্য Digital Studio কে প্রদান করবো। যদি আমি, {N}, প্রাপ্য মূল্য Digital Studio বা তার কর্মচারীদের প্রদান না করি তবে আমার বিরুদ্ধে Section 316 BNS এর মাধ্যমে কড়া ব্যবস্থা নেওয়ার সম্মতি দিচ্ছি।",
+    en: "I, {N}, hereby agree to pay the correct and pre-determined amount to Digital Studio upon completion of the work. If I, {N}, fail to pay the due amount to Digital Studio or its employees, I consent to strict action being taken against me under Section 316 of the BNS." },
+  { bn: "আমি, {N}, এই মর্মে সম্মতিদান করছি যে কাজ হয়ে যাওয়ার পরে আমি Digital Studio বা এর কর্মচারীদের সঠিক মূল্য প্রদান করবো এবং আমি, {N}, যদি কোনো জাল Payment Slip দেখাই এবং সেটা প্রমাণিত হয় তবে আমার বিরুদ্ধে IT Act - Section 66D, Section 318 BNS এবং Sections 336 & 340 BNS অনুযায়ী কড়া ব্যবস্থা নেওয়ার দাবি জানাচ্ছি।",
+    en: "I, {N}, hereby agree to pay the due amount to Digital Studio or its employees upon completion of the work. Furthermore, I, {N}, acknowledge that if I present a fraudulent payment slip and this is proven, strict action may be taken against me under Section 66D of the IT Act, Section 318 of the BNS, and Sections 336 & 340 of the BNS." },
+  { bn: "আমি, {N}, এই মর্মে সম্মতিদান করছি যে সুস্থ ও স্বাভাবিকভাবে কাজ এবং পেমেন্ট সম্পন্ন হয়ে যাওয়ার পরে যদি আমি ইচ্ছাকৃতভাবে 1930 তে কল করে, অন্যত্র কল করে কিংবা কোনো অ্যাপের মাধ্যমে মিথ্যা ফ্রড রিপোর্ট করি, তবে আমার বিরুদ্ধে Section 217 BNS, Section 248 BNS, Section 318 BNS অনুযায়ী কড়া ব্যবস্থা নেওয়ার জন্য সম্মতি জানাচ্ছি। (প্রকৃত প্রতারণার ক্ষেত্রে অভিযোগ করার অধিকার অক্ষুণ্ণ থাকবে।)",
+    en: "I, {N}, hereby consent that if, after the successful and proper completion of the work and subsequent payment, I intentionally file a false fraud report—whether by calling 1930, making other calls, or using any app—I agree to strict action being taken against me under Section 217 BNS, Section 248 BNS, and Section 318 BNS. (The right to report genuine fraud remains unaffected.)" },
+  { bn: "আমি, {N}, এই মর্মে সম্মতিদান করছি যে Digital Studio বা তার কর্মচারীদের পক্ষ থেকে পাওয়া Invoice বা Bill ছাড়া ভবিষ্যতের কোনো তর্কবিতর্ক জড়াতে পারবো না। এবং এটাও সম্মতি দিচ্ছি যে একবার সুস্থ স্বাভাবিক ভাবে কাজ হয়ে যাওয়ার পরে এবং পেমেন্ট করে দেওয়ার পরে কর্তৃপক্ষ দ্বারা হওয়া কোনো ভুল ছাড়া সেই টাকা আর ফেরত চাইতে পারবো না।",
+    en: "I, {N}, hereby agree that I will not raise any future disputes unless I possess an invoice or bill issued by Digital Studio or its employees. I further agree that once the work has been successfully completed and payment made, I cannot claim a refund unless the issue arose due to an error on the part of the authorities." }
+];
+function nmv() { return $('name').value.trim() || '________'; }
+function fillT(t, name, html) {
+  var e = esc(t);
+  return e.replace(/\{N\}/g, html ? '<b class="nm">' + esc(name) + '</b>' : esc(name));
+}
+function renderConsents() {
+  var h = '';
+  CONSENTS.forEach(function (c, i) {
+    h += '<label class="chk"><input type="checkbox" id="c' + i + '"><span>' + fillT(c.bn, nmv(), true) + '<br><span class="en">' + fillT(c.en, nmv(), true) + '</span></span></label>';
+  });
+  $('consents').innerHTML = h;
+}
+
+/* ---------- input rules ---------- */
+$('name').addEventListener('input', function () {
+  var n = nmv();
+  Array.prototype.forEach.call(document.querySelectorAll('.nm'), function (el) { el.textContent = n; });
+});
+$('phone').addEventListener('input', function () { this.value = this.value.replace(/\D/g, '').slice(0, 10); });
+$('pin').addEventListener('input', function () { this.value = this.value.replace(/\D/g, '').slice(0, 6); });
+$('aadhaar').addEventListener('input', function () {
+  var d = this.value.replace(/\D/g, '').slice(0, 12);
+  this.value = d.replace(/(\d{4})(?=\d)/g, '$1 ');
+});
+['phone', 'pin', 'aadhaar'].forEach(function (id) {
+  $(id).addEventListener('keydown', function (e) { if (e.key === ' ') e.preventDefault(); });
+  $(id).addEventListener('paste', function (e) { e.preventDefault(); var t = (e.clipboardData || window.clipboardData).getData('text'); this.value = t; this.dispatchEvent(new Event('input')); });
+});
+
+/* ---------- camera-only photo capture ---------- */
+var PH = { af: null, ab: null, vf: null, vb: null };
+var PHL = { af: 'Aadhar Front / সামনে', ab: 'Aadhar Back / পেছনে', vf: 'Voter Front / সামনে', vb: 'Voter Back / পেছনে' };
+function renderPhotos() {
+  ['af', 'ab'].forEach(function (k) { $('phsA').appendChild(phBox(k)); });
+  ['vf', 'vb'].forEach(function (k) { $('phsV').appendChild(phBox(k)); });
+}
+function phBox(k) {
+  var d = document.createElement('div');
+  d.className = 'ph'; d.id = 'ph_' + k;
+  d.innerHTML = '<div class="plus">+</div><div class="cap">' + PHL[k] + '</div>';
+  d.addEventListener('click', function () { openCam(k); });
+  return d;
+}
+function phDone(k) {
+  var d = $('ph_' + k);
+  d.className = 'ph done';
+  d.innerHTML = '<img alt="" src="' + PH[k] + '"><div class="up">✔ Uploaded</div><div class="cap">' + PHL[k] + ' (আবার তুলতে চাপ দিন)</div>';
+}
+var stream = null, curKey = null;
+function stopCam() { if (stream) { stream.getTracks().forEach(function (t) { t.stop(); }); stream = null; } $('vid').srcObject = null; }
+function openCam(k) {
+  curKey = k;
+  $('camTitle').textContent = PHL[k];
+  $('camErr').textContent = ''; $('camRetry').style.display = 'none'; $('camShot').style.display = '';
+  $('camOv').classList.add('on');
+  startCam();
+}
+function startCam() {
+  stopCam();
+  $('camErr').textContent = ''; $('camRetry').style.display = 'none'; $('camShot').style.display = '';
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    camFail('এই ব্রাউজারে ক্যামেরা চালু করা যাচ্ছে না। অন্য ব্রাউজার (Chrome) দিয়ে খুলুন।'); return;
+  }
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 } }, audio: false })
+    .then(function (s) { stream = s; $('vid').srcObject = s; return $('vid').play(); })
+    .catch(function () {
+      camFail('ক্যামেরার অনুমতি দেওয়া হয়নি। fraud কমানোর জন্য শুধু সরাসরি ক্যামেরা থেকে ছবি নেওয়া হয়, তাই অনুমতি দেওয়া আবশ্যক। "আবার চেষ্টা করুন" চাপুন এবং Allow দিন। (অনুমতি আটকে থাকলে ব্রাউজারের ঠিকানার পাশের 🔒 চিহ্নে চাপ দিয়ে Camera → Allow করুন।)');
+    });
+}
+function camFail(msg) { $('camErr').textContent = msg; $('camRetry').style.display = ''; $('camShot').style.display = 'none'; }
+$('camRetry').onclick = startCam;
+$('camCancel').onclick = function () { stopCam(); $('camOv').classList.remove('on'); };
+$('camShot').onclick = function () {
+  var v = $('vid');
+  if (!v.videoWidth) { $('camErr').textContent = 'ক্যামেরা এখনও তৈরি হয়নি, একটু অপেক্ষা করুন।'; return; }
+  var max = 1280, sc = Math.min(1, max / Math.max(v.videoWidth, v.videoHeight));
+  var c = document.createElement('canvas');
+  c.width = Math.round(v.videoWidth * sc); c.height = Math.round(v.videoHeight * sc);
+  c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
+  var q = 0.8, data = c.toDataURL('image/jpeg', q);
+  while (data.length * 0.75 > 1.9 * 1024 * 1024 && q > 0.3) { q -= 0.1; data = c.toDataURL('image/jpeg', q); }
+  PH[curKey] = data; phDone(curKey);
+  stopCam(); $('camOv').classList.remove('on');
+};
+
+/* ---------- validation + submit ---------- */
+function validate() {
+  var e = [];
+  if (!$('name').value.trim()) e.push('নাম দিন');
+  if ($('phone').value.length !== 10) e.push('মোবাইল নম্বর ঠিক 10 সংখ্যার হতে হবে');
+  if ($('aadhaar').value.replace(/\D/g, '').length !== 12) e.push('আধার নম্বর ঠিক 12 সংখ্যার হতে হবে');
+  if (!$('address').value.trim()) e.push('ঠিকানা দিন');
+  if ($('pin').value.length !== 6) e.push('পিনকোড ঠিক 6 সংখ্যার হতে হবে');
+  if (!PH.af || !PH.ab) e.push('আধার কার্ডের সামনে ও পেছনের ছবি দিন');
+  if (!PH.vf || !PH.vb) e.push('ভোটার কার্ডের সামনে ও পেছনের ছবি দিন');
+  for (var i = 0; i < CONSENTS.length; i++) if (!$('c' + i).checked) { e.push('সবগুলো টিক বক্সে টিক দিন'); break; }
+  return e;
+}
+var R = null;
+$('submitBtn').onclick = function () {
+  var e = validate(), box = $('errs');
+  if (e.length) { box.style.display = 'block'; box.innerHTML = e.map(function (x) { return '• ' + esc(x); }).join('<br>'); box.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+  box.style.display = 'none';
+  if (API_URL.indexOf('PASTE_') === 0) { alert('API_URL সেট করা হয়নি (index.html দেখুন)'); return; }
+  var btn = $('submitBtn'); btn.disabled = true;
+  loading(true, 'জমা হচ্ছে, একটু অপেক্ষা করুন... (ছবি আপলোড হচ্ছে)');
+  var d = { name: $('name').value.trim(), phone: '+91' + $('phone').value, aadhaar: $('aadhaar').value, address: $('address').value.trim(), pin: $('pin').value };
+  api({ action: 'book', name: d.name, phone: d.phone, aadhaar: d.aadhaar, address: d.address, pin: d.pin, images: PH, consents: CONSENTS.map(function () { return true; }) })
+    .then(function (res) {
+      if (!res.ok) throw new Error(res.error || 'Error');
+      R = { total: res.total, number: res.number, appointment: res.appointment, charge: res.charge, id: res.id, name: d.name, phone: d.phone, aadhaar: d.aadhaar, address: d.address, pin: d.pin };
+      try { localStorage.setItem('ys_receipt', JSON.stringify(R)); } catch (x) { }
+      showReceipt();
+    })
+    .catch(function (err) {
+      box.style.display = 'block'; box.textContent = 'জমা হয়নি: ' + err.message + ' — আবার চেষ্টা করুন।';
+      btn.disabled = false;
+    })
+    .then(function () { loading(false); });
+};
+function showReceipt() {
+  $('rTotal').textContent = R.total; $('rNum').textContent = R.number;
+  $('rAppt').textContent = R.appointment; $('rCharge').textContent = '₹' + R.charge;
+  $('viewForm').style.display = 'none'; $('viewAdmin').style.display = 'none'; $('viewReceipt').style.display = '';
+  window.scrollTo(0, 0);
+}
+
+/* ---------- PDF letter ---------- */
+function cbRows(from, to, name) {
+  var h = '';
+  for (var i = from; i < to; i++) {
+    h += '<div class="cbrow"><div class="cb"><i></i></div><div>' + fillT(CONSENTS[i].bn, name, false) + '<div class="en">' + fillT(CONSENTS[i].en, name, false) + '</div></div></div>';
+  }
+  return h;
+}
+function letterPages(r) {
+  var site = location.href.split('#')[0];
+  var qr = qrcode(0, 'M'); qr.addData(site + '#verify=' + r.id); qr.make();
+  var qrImg = qr.createDataURL(5, 0);
+  function kv(k, v) { return '<div class="kv"><b>' + k + '</b><span>' + esc(v) + '</span></div>'; }
+  var head = '<h3>Yuva Shakti Application Appointment Booking</h3><div class="shopn">Digital Studio</div>';
+  var p1 = '<div class="page">' + head +
+    kv('Total Booking :', r.total) + kv('Your Booking Number :', r.number) +
+    kv('Appointment Time and Date :', r.appointment) + kv('Service Charge :', '₹' + r.charge) +
+    '<div class="sec">Booking Details</div>' +
+    kv('Name / নাম :', r.name) + kv('Phone Number / মোবাইল নম্বর :', r.phone) +
+    kv('Aadhar Card Number / আধার কার্ড নম্বর :', r.aadhaar) + kv('Address Line / ঠিকানার লাইন :', r.address) +
+    kv('Pin Code / পিনকোড :', r.pin) +
+    kv('Aadhar Card Photo (Both Side) :', 'Front: Uploaded  |  Back: Uploaded') +
+    kv('Voter Card Photo (Both Side) :', 'Front: Uploaded  |  Back: Uploaded') +
+    '<div class="sec">Declarations / সম্মতিপত্র</div>' + cbRows(0, 3, r.name) + '</div>';
+  var p2 = '<div class="page">' + head + '<div class="sec">Declarations / সম্মতিপত্র (continued)</div>' + cbRows(3, 7, r.name) +
+    '<div class="qrbox"><img src="' + qrImg + '" alt="QR"><div style="font-size:11px;margin-top:4px">Unique verification QR — Admin login required<br>Booking No. ' + esc(r.number) + '</div></div></div>';
+  return [p1, p2];
+}
+$('dlBtn').onclick = function () {
+  if (!R) return;
+  var btn = $('dlBtn'); btn.disabled = true;
+  loading(true, 'PDF তৈরি হচ্ছে...');
+  var host = $('letter'), pages = letterPages(R), pdf = null;
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () {
+    var tries = [[1.6, .72], [1.4, .62], [1.25, .52], [1.1, .45], [1, .38]];
+    var chain = Promise.resolve(), done = false;
+    tries.forEach(function (t) {
+      chain = chain.then(function () {
+        if (done) return;
+        var doc = new jspdf.jsPDF({ unit: 'mm', format: 'a4', compress: true });
+        var seq = Promise.resolve();
+        pages.forEach(function (ph, idx) {
+          seq = seq.then(function () {
+            host.innerHTML = ph;
+            var imgs = Array.prototype.slice.call(host.querySelectorAll('img')).map(function (im) { return im.decode ? im.decode().catch(function () { }) : null; });
+            return Promise.all(imgs).then(function () {
+              return html2canvas(host.firstChild, { scale: t[0], backgroundColor: '#ffffff' });
+            }).then(function (cv) {
+              if (idx > 0) doc.addPage();
+              doc.addImage(cv.toDataURL('image/jpeg', t[1]), 'JPEG', 0, 0, 210, 297);
+            });
+          });
+        });
+        return seq.then(function () {
+          pdf = doc;
+          if (doc.output('blob').size <= 200 * 1024) done = true;
+        });
+      });
+    });
+    return chain;
+  }).then(function () {
+    pdf.save('Yuva-Shakti-Booking-' + R.number + '.pdf');
+  }).catch(function (e) { alert('PDF তৈরি করা যায়নি: ' + e.message); })
+    .then(function () { host.innerHTML = ''; loading(false); btn.disabled = false; });
+};
+
+/* ---------- admin ---------- */
+var AD = null, SET = null;
+function route() {
+  var h = location.hash;
+  if (R && !h) return;
+  if (h === '#admin' || h.indexOf('#verify=') === 0) {
+    $('viewForm').style.display = 'none'; $('viewReceipt').style.display = 'none'; $('viewAdmin').style.display = '';
+    var saved = null; try { saved = JSON.parse(sessionStorage.getItem('ys_admin') || 'null'); } catch (e) { }
+    if (saved && !AD) { AD = saved; enterPanel(); }
+    else if (AD) enterPanel();
+  } else {
+    $('viewAdmin').style.display = 'none';
+    $('viewForm').style.display = R ? 'none' : '';
+    $('viewReceipt').style.display = R ? '' : 'none';
+  }
+}
+window.addEventListener('hashchange', route);
+$('adBtn').onclick = function () {
+  var id = $('adId').value, pw = $('adPw').value;
+  $('adErr').textContent = '';
+  if (API_URL.indexOf('PASTE_') === 0) { $('adErr').textContent = 'API_URL সেট করা হয়নি'; return; }
+  loading(true, 'লগইন হচ্ছে...');
+  api({ action: 'login', adminId: id, adminPass: pw }).then(function (r) {
+    if (!r.ok) throw new Error(r.error);
+    AD = { adminId: id, adminPass: pw };
+    try { sessionStorage.setItem('ys_admin', JSON.stringify(AD)); } catch (e) { }
+    $('adPw').value = '';
+    enterPanel();
+  }).catch(function (e) { $('adErr').textContent = e.message; }).then(function () { loading(false); });
+};
+$('logoutBtn').onclick = function () {
+  AD = null; try { sessionStorage.removeItem('ys_admin'); } catch (e) { }
+  $('adPanel').style.display = 'none'; $('adLogin').style.display = '';
+};
+function adm(action, extra) {
+  var b = { action: action, adminId: AD.adminId, adminPass: AD.adminPass };
+  for (var k in extra) b[k] = extra[k];
+  return api(b);
+}
+function enterPanel() {
+  $('adLogin').style.display = 'none'; $('adPanel').style.display = '';
+  loading(true, 'ডেটা আনা হচ্ছে...');
+  var vid = location.hash.indexOf('#verify=') === 0 ? location.hash.slice(8) : '';
+  var jobs = [adm('getSettings'), adm('list')];
+  if (vid) jobs.push(adm('get', { id: vid }));
+  Promise.all(jobs).then(function (rs) {
+    if (!rs[0].ok) { if (/ID বা Password/.test(rs[0].error)) { $('logoutBtn').click(); } throw new Error(rs[0].error); }
+    SET = rs[0].settings; renderSettings();
+    renderList(rs[1].rows || []);
+    var vc = $('verifyCard');
+    if (vid) {
+      vc.style.display = '';
+      vc.innerHTML = rs[2].ok ? verifyHTML(rs[2].row) : '<h2 style="color:#c62828">❌ ' + esc(rs[2].error) + '</h2>';
+    } else vc.style.display = 'none';
+  }).catch(function (e) { alert(e.message); }).then(function () { loading(false); });
+}
+function dl(url, label) { return url ? '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + label + '</a>' : '-'; }
+function verifyHTML(r) {
+  function row(k, v) { return '<div class="row"><b>' + k + '</b><span>' + esc(v) + '</span></div>'; }
+  return '<h2>✅ Verified Booking #' + esc(r.no) + '</h2>' +
+    row('Name', r.name) + row('Phone', r.phone) + row('Aadhaar', r.aadhaar) + row('Address', r.address) + row('Pin Code', r.pin) +
+    row('Appointment', r.appt) + row('Service Charge', '₹' + r.charge) + row('Submitted', r.at) + row('Consents', r.consents) +
+    '<div class="row"><b>Aadhaar Photos</b><span>' + dl(r.af, 'Front (Drive)') + ' · ' + dl(r.ab, 'Back (Drive)') + '</span></div>' +
+    '<div class="row"><b>Voter Photos</b><span>' + dl(r.vf, 'Front (Drive)') + ' · ' + dl(r.vb, 'Back (Drive)') + '</span></div>';
+}
+function renderList(rows) {
+  $('cnt').textContent = '(' + rows.length + ')';
+  var h = '<tr><th>No.</th><th>Name</th><th>Phone</th><th>Appointment</th><th>₹</th><th>Aadhaar</th><th>Voter</th></tr>';
+  rows.slice().reverse().forEach(function (r) {
+    h += '<tr><td>' + esc(r.no) + '</td><td>' + esc(r.name) + '</td><td>' + esc(r.phone) + '</td><td>' + esc(r.appt) + '</td><td>' + esc(r.charge) + '</td><td>' +
+      dl(r.af, 'Front') + ' · ' + dl(r.ab, 'Back') + '</td><td>' + dl(r.vf, 'Front') + ' · ' + dl(r.vb, 'Back') + '</td></tr>';
+  });
+  $('tbl').innerHTML = h;
+}
+function timeAuto(el) {
+  el.addEventListener('input', function () {
+    var d = this.value.replace(/\D/g, '').slice(0, 4);
+    this.value = d.length > 2 ? d.slice(0, 2) + ':' + d.slice(2) : d;
+  });
+}
+function renderSettings() {
+  var h = '';
+  for (var i = 1; i <= 4; i++) {
+    h += '<div class="slotgrid"><div><label class="fl">Slot ' + i + ' Start Time</label><input type="text" inputmode="numeric" maxlength="5" placeholder="HH:MM" id="s' + i + 's"></div>' +
+      '<div><label class="fl">End Time</label><input type="text" inputmode="numeric" maxlength="5" placeholder="HH:MM" id="s' + i + 'e"></div></div>';
+  }
+  $('slotsBox').innerHTML = h;
+  for (var j = 1; j <= 4; j++) {
+    $('s' + j + 's').value = SET['slot' + j + 'Start'] || ''; $('s' + j + 'e').value = SET['slot' + j + 'End'] || '';
+    timeAuto($('s' + j + 's')); timeAuto($('s' + j + 'e'));
+  }
+  $('gap').value = SET.gapMinutes || ''; $('startDate').value = SET.startDate || '';
+}
+$('saveBtn').onclick = function () {
+  var s = {};
+  for (var i = 1; i <= 4; i++) { s['slot' + i + 'Start'] = $('s' + i + 's').value.trim(); s['slot' + i + 'End'] = $('s' + i + 'e').value.trim(); }
+  s.gapMinutes = $('gap').value; s.startDate = $('startDate').value;
+  $('saveMsg').style.color = ''; $('saveMsg').textContent = '';
+  loading(true, 'সেভ হচ্ছে...');
+  adm('saveSettings', { settings: s }).then(function (r) {
+    if (!r.ok) throw new Error(r.error);
+    $('saveMsg').style.color = '#2e7d32'; $('saveMsg').textContent = '✔ সেভ হয়েছে। এখন থেকে নতুন বুকিংয়ে এই নিয়ম চলবে।';
+  }).catch(function (e) { $('saveMsg').style.color = ''; $('saveMsg').textContent = e.message; })
+    .then(function () { loading(false); });
+};
+
+/* ---------- init ---------- */
+renderConsents(); renderPhotos();
+try { var sv = localStorage.getItem('ys_receipt'); if (sv && !location.hash) { /* keep form fresh; receipt only after submit */ } } catch (e) { }
+route();
+</script>
+</body>
+</html>
